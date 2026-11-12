@@ -816,6 +816,7 @@
     var ageEl = document.getElementById('rsvp-age');
     var errAge = document.getElementById('err-age');
     var fromEl = document.getElementById('rsvp-from');
+    var invitedEl = document.getElementById('rsvp-invited');
     var msgEl = document.getElementById('rsvp-msg');
     var guestsEl = document.getElementById('rsvp-guests');
     var guestsField = document.getElementById('guests-field');
@@ -990,6 +991,7 @@
         age: mainAge.v,
         contact: contactEl.value.trim(),
         from: fromEl.value.trim(),
+        invitedBy: invitedEl.value.trim(),
         attending: attending(),
         guests: attending() === 'Yes' ? clampGuests(guestsEl.value) : 0,
         party: party,                                   // the extra guests (guest 2, 3, ...)
@@ -1015,8 +1017,8 @@
         if (data.attending === 'Yes') {
           thanksTitle.textContent = 'See you there, ' + first + '!';
           thanksText.textContent = data.guests > 1
-            ? 'We saved ' + data.guests + ' seats for your group on December 21. We can’t wait to celebrate with you.'
-            : 'Your seat is saved for December 21. We can’t wait to celebrate with you.';
+            ? 'We saved ' + data.guests + ' seats for your group on December 20. We can’t wait to celebrate with you.'
+            : 'Your seat is saved for December 20. We can’t wait to celebrate with you.';
         } else {
           thanksTitle.textContent = 'Thank you, ' + first + '.';
           thanksText.textContent = 'We’re sorry you can’t make it, and we’re grateful you let us know. You will be in our hearts that day.';
@@ -1058,7 +1060,7 @@
       var lastTouch = -1e9, tiltRaf = 0, lastMove = null;
       var stage = card.parentNode;
       var dirty = function () {
-        return !!(nameEl.value || ageEl.value || contactEl.value || fromEl.value || msgEl.value ||
+        return !!(nameEl.value || ageEl.value || contactEl.value || fromEl.value || invitedEl.value || msgEl.value ||
                   attending() || guestList.children.length);
       };
       var tiltAllowed = function () {
