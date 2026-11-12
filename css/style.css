@@ -766,3 +766,24 @@ html.lb-open { overflow: hidden; }
 .name-age .field__err { grid-column: auto; }
 .rsvp__privacy { margin: 0; text-align: center; font-size: .82rem; color: rgba(217, 202, 179, .75); }
 @media (min-width: 700px) { .rsvp__form .rsvp__privacy { grid-column: 1 / -1; } }
+
+
+/* ---------- Countdown (hero, under "ANNIVERSARY") ---------- */
+.countdown { margin-top: clamp(14px, 2.4vh, 24px); text-align: center; }
+.countdown [hidden] { display: none !important; }
+.countdown__grid { display: inline-flex; align-items: flex-start; }
+.cd { display: grid; gap: 5px; justify-items: center; min-width: 3.4rem; padding: 0 clamp(8px, 2.4vw, 16px); }
+.cd + .cd { border-left: 1px solid rgba(214, 168, 92, .3); }
+.cd b {
+  font-family: var(--font-display); font-weight: 500; font-size: clamp(1.55rem, 6vw, 2rem); line-height: 1;
+  color: var(--gold-soft); font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+.cd span { font-family: var(--font-label); font-size: .56rem; letter-spacing: .28em; padding-left: .28em; text-transform: uppercase; color: var(--gold); opacity: .9; }
+.countdown__msg {
+  margin: 0; font-family: var(--font-display); font-style: italic; font-size: clamp(1.2rem, 4.6vw, 1.5rem); color: var(--gold-soft); line-height: 1.2;
+}
+@media (min-width: 961px) { .cd b { font-size: 2.1rem; } .cd { min-width: 4.2rem; padding: 0 18px; } }
+
+/* keep "2:00 PM" together on narrow phones */
+.hero__date time { white-space: nowrap; }
+@media (max-width: 420px) { .hero__date { font-size: 1rem; letter-spacing: .07em; } }

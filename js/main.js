@@ -80,6 +80,7 @@
   /* Features that don't need WebGL (function declarations are hoisted) */
   initDepthStack();
   initMap();
+  initCountdown();
   initLivePause();
   initProgram();
   initGallery();
@@ -1189,6 +1190,65 @@
     stage.addEventListener('pointercancel', function () { sw.id = null; });
 
     return { open: open };
+  }
+
+
+  /* ==========================================================
+     COUNTDOWN — to December 20, 2026, 2:00 PM Philippine time.
+     Ticks only while the hero is on screen and the tab is visible.
+     ========================================================== */
+  function initCountdown() {
+    var root = document.getElementById('countdown');
+    if (!root) return;
+    var START = Date.parse('2026-12-20T14:00:00+08:00');
+    var END = Date.parse('2026-12-20T23:59:59+08:00');
+    var grid = document.getElementById('cd-grid'), msg = document.getElementById('cd-msg'), sr = document.getElementById('cd-sr');
+    var el = { d: document.getElementById('cd-d'), h: document.getElementById('cd-h'), m: document.getElementById('cd-m'), s: document.getElementById('cd-s') };
+    var sWrap = document.getElementById('cd-s-wrap');
+    if (reduceMotion) sWrap.hidden = true;           // no ticking seconds for people who prefer less motion
+    var timer = 0, running = false, lastMin = -1;
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    function put(node, v) { if (node.textContent !== v) node.textContent = v; }
+    function plural(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+
+    function render() {            // returns ms until the next update (0 = done)
+      var now = Date.now();
+      if (now >= START) {
+        grid.hidden = true; msg.hidden = false;
+        var live = now < END;
+        msg.textContent = live ? 'Happening now' : 'Thank you for celebrating with us';
+        sr.textContent = msg.textContent;
+        return live ? 60000 : 0;
+      }
+      grid.hidden = false; msg.hidden = true;
+      var diff = Math.floor((START - now) / 1000);
+      var d = Math.floor(diff / 86400), h = Math.floor(diff % 86400 / 3600), m = Math.floor(diff % 3600 / 60), sec = diff % 60;
+      put(el.d, pad(d)); put(el.h, pad(h)); put(el.m, pad(m)); put(el.s, pad(sec));
+      if (m !== lastMin) {         // screen readers get a calm text update once a minute
+        lastMin = m;
+        sr.textContent = plural(d, 'day') + ', ' + plural(h, 'hour') + ' and ' + plural(m, 'minute') + ' until the celebration.';
+      }
+      return reduceMotion ? 30000 : Math.max(200, 1000 - (now % 1000));
+    }
+    function tick() {
+      var wait = render();
+      if (running && wait) timer = setTimeout(tick, wait);
+    }
+    function start() { if (running) return; running = true; tick(); }
+    function stop() { running = false; clearTimeout(timer); }
+    var heroOn = true, heroEl = document.getElementById('top'), pending = false;
+    function sync() { if (heroOn && !document.hidden) start(); else stop(); }
+    // The hero is "stuck" under later sections on desktop, so scroll position (not visibility) tells us when it is covered
+    function check() {
+      pending = false;
+      var on = window.scrollY < (heroEl ? heroEl.offsetHeight : 800) - 40;
+      if (on !== heroOn) { heroOn = on; sync(); }
+    }
+    render();
+    document.addEventListener('visibilitychange', sync);
+    window.addEventListener('scroll', function () { if (!pending) { pending = true; requestAnimationFrame(check); } }, { passive: true });
+    check();
+    sync();
   }
 
   /* ---------- Start ---------- */
